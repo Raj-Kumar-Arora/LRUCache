@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LRUCache.Tests/LRUCache.Tests.csproj" />
+  <Project Path="LRUCache/LRUCache.csproj" />
+</Solution>
