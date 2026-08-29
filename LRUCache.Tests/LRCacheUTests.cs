@@ -1,6 +1,6 @@
 ﻿namespace LRUCache.Tests
 {
-    public class LRCacheUTest
+    public class LRCacheUTests
     {
         [Fact]
         public void Test_BasicGET()
