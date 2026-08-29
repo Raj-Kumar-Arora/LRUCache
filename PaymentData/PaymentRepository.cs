@@ -1,4 +1,6 @@
-﻿namespace PaymentData
+﻿using LRUCache;
+
+namespace PaymentData
 {
     public class Payment(int id, decimal amount, string currency)
     {
@@ -11,6 +13,7 @@
     {
         //Simulating DB data with in-memory to save time to setup SQL Server
         private readonly Dictionary<int, Payment> paymentData = new Dictionary<int, Payment>();
+
         public PaymentRepository()
         {
             //simulated data
