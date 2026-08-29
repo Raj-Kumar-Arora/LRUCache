@@ -34,7 +34,7 @@
             }
         }
 
-        public void Put(TKey key, TValue value)
+        public bool Put(TKey key, TValue value)
         {
             var found = _cache.TryGetValue(key, out var node);
             if (found)
@@ -57,6 +57,20 @@
                     _ = _cache.Remove(lastNode.Value.Key);
                 }
             }
+
+            return found;
+        }
+
+        public bool Remove(TKey key)
+        {
+            var found = _cache.TryGetValue(key, out var node);
+            if (found)
+            {
+                _list.Remove(node);
+                _cache.Remove(key);
+            }
+
+            return found;
         }
     }
 }

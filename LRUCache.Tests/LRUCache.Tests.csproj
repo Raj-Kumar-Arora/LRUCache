@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LRUCache\LRUCache.csproj" />
+    <ProjectReference Include="..\PaymentData\PaymentData.csproj" />
   </ItemGroup>
 
   <ItemGroup>

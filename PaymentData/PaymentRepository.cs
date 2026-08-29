@@ -12,39 +12,49 @@ namespace PaymentData
     public class PaymentRepository
     {
         //Simulating DB data with in-memory to save time to setup SQL Server
-        private readonly Dictionary<int, Payment> paymentData = new Dictionary<int, Payment>();
+        private readonly Dictionary<int, Payment> _paymentData = new Dictionary<int, Payment>();
+        private readonly LRUCache<int, Payment> _cache = new LRUCache<int, Payment>(3);    //** ToDo - use DI  **//
 
         public PaymentRepository()
         {
             //simulated data
-            paymentData.TryAdd(1, new Payment(1, 100, "INR"));
-            paymentData.TryAdd(2, new Payment(2, 200, "USD"));
-            paymentData.TryAdd(3, new Payment(3, 300, "PLN"));
+            _paymentData.TryAdd(1, new Payment(1, 100, "INR"));
+            _paymentData.TryAdd(2, new Payment(2, 200, "USD"));
+            _paymentData.TryAdd(3, new Payment(3, 300, "PLN"));
         }
 
         public Payment? GetById(int paymentId)
         {
-            return paymentData.TryGetValue(paymentId, out var payment)
-                ? payment
-                : null;
+            if (_cache.TryGet(paymentId, out var payment))
+                return payment;
+
+            if (_paymentData.TryGetValue(paymentId, out var dbPayment))
+            {
+                _cache.Put(paymentId, dbPayment);
+                return dbPayment;
+            }
+
+            return null;                
         }
         public bool Update(int paymentId, decimal amount)
         {
-            var found = paymentData.TryGetValue(paymentId, out var payment);
+            var found = _paymentData.TryGetValue(paymentId, out var payment);
             if (found)
+            {
                 payment.Amount = amount;
+                _cache.Remove(paymentId);
+            }
 
             return found;
         }
         public bool Delete(int paymentId)
         {
-            //var found = paymentData.TryGetValue(paymentId, out var payment);
-            //if (found)
-            //    paymentData.Remove(paymentId);
-
-            //return found;
-
-            return paymentData.Remove(paymentId);
+            if (_paymentData.Remove(paymentId))
+            {
+                _cache.Remove(paymentId);
+                return true;
+            }
+            return false;
         }
     }
 }
